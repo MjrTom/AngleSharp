@@ -1422,5 +1422,30 @@ namespace AngleSharp.Core.Tests.Library
             Assert.IsNotNull(template.Content.FirstChild);
             Assert.AreEqual(0, template.ChildNodes.Length);
         }
+
+        [Test]
+        public void GetAttributeNode()
+        {
+            var ns = "http://anglesharp.com/ns";
+
+            var parser = new HtmlParser();
+            var document = parser.ParseDocument("<html><head></head><body></body></html>");
+
+            var div = document.CreateElement("div");
+            var attributeValue = "abc";
+            div.SetAttribute(ns, "test:name", attributeValue);
+
+            var attrByName = div.GetAttributeNode("name");
+            var attrByPrefixAndName = div.GetAttributeNode("test:name");
+            var attrByNamespaceAndName = div.GetAttributeNode(ns, "name");
+            var attrByNamespaceAndPrefixAndName = div.GetAttributeNode(ns, "test:name");
+
+            Assert.IsNull(attrByName);
+            Assert.IsNotNull(attrByPrefixAndName);
+            Assert.IsNotNull(attrByNamespaceAndName);
+            Assert.IsNull(attrByNamespaceAndPrefixAndName);
+            Assert.AreEqual(attributeValue, attrByPrefixAndName.Value);
+            Assert.AreEqual(attrByPrefixAndName, attrByNamespaceAndName);
+        }
     }
 }
