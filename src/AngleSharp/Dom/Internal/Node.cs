@@ -271,21 +271,14 @@ namespace AngleSharp.Dom
         internal INode InsertBefore(Node newElement, Node? referenceElement, Boolean suppressObservers)
         {
             var document = Owner;
-            var count = newElement.NodeType == NodeType.DocumentFragment ? newElement.ChildNodes.Length : 1;
 
             if (referenceElement is not null && document is not null)
             {
                 var childIndex = referenceElement.Index();
-                foreach (var m in document.GetAttachedReferences<Range>())
+
+                foreach (var m in document.GetAttachedReferences<IPreInsert>())
                 {
-                    if (m.Head == this && m.Start > childIndex)
-                    {
-                        m.StartWith(this, m.Start + count);
-                    }
-                    if (m.Tail == this && m.End > childIndex)
-                    {
-                        m.EndWith(this, m.End + count);
-                    }
+                    m.PreInsert(this, newElement, childIndex);
                 }
             }
 
@@ -349,24 +342,9 @@ namespace AngleSharp.Dom
 
             if (document is not null)
             {
-                foreach (var m in document.GetAttachedReferences<Range>())
+                foreach (var m in document.GetAttachedReferences<IPreRemove>())
                 {
-                    if (m.Head.IsInclusiveDescendantOf(node))
-                    {
-                        m.StartWith(this, index);
-                    }
-                    if (m.Tail.IsInclusiveDescendantOf(node))
-                    {
-                        m.EndWith(this, index);
-                    }
-                    if (m.Head == this && m.Start > index)
-                    {
-                        m.StartWith(this, m.Start - 1);
-                    }
-                    if (m.Tail == this && m.End > index)
-                    {
-                        m.EndWith(this, m.End - 1);
-                    }
+                    m.PreRemove(this, node, index);
                 }
             }
 

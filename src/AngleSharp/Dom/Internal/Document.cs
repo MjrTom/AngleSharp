@@ -1054,10 +1054,20 @@ namespace AngleSharp.Dom
         }
 
         /// <inheritdoc />
-        public INodeIterator CreateNodeIterator(INode root, FilterSettings settings = FilterSettings.All, NodeFilter? filter = null) => new NodeIterator(root, settings, filter);
+        public INodeIterator CreateNodeIterator(INode root, FilterSettings settings = FilterSettings.All, NodeFilter? filter = null)
+        {
+            var iterator = new NodeIterator(root, settings, filter);
+            AttachReference(iterator);
+            return iterator;
+        }
 
         /// <inheritdoc />
-        public ITreeWalker CreateTreeWalker(INode root, FilterSettings settings = FilterSettings.All, NodeFilter? filter = null) => new TreeWalker(root, settings, filter);
+        public ITreeWalker CreateTreeWalker(INode root, FilterSettings settings = FilterSettings.All, NodeFilter? filter = null)
+        {
+            var walker = new TreeWalker(root, settings, filter);
+            AttachReference(walker);
+            return walker;
+        }
 
         /// <inheritdoc />
         public IRange CreateRange()

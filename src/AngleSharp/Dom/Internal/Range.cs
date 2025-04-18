@@ -9,7 +9,7 @@ namespace AngleSharp.Dom
     /// <summary>
     /// A DOM range to gather DOM tree information.
     /// </summary>
-    sealed class Range : IRange
+    sealed class Range : IRange, IPreRemove, IPreInsert
     {
         #region Fields
 
@@ -62,6 +62,45 @@ namespace AngleSharp.Dom
                 }
 
                 return container!;
+            }
+        }
+
+        #endregion
+
+        #region Internal
+
+        void IPreInsert.PreInsert(Node parent, Node node, Int32 index)
+        {
+            var count = node.NodeType == NodeType.DocumentFragment ? node.ChildNodes.Length : 1;
+
+            if (Head == parent && Start > index)
+            {
+                StartWith(parent, Start + count);
+            }
+
+            if (Tail == parent && End > index)
+            {
+                EndWith(parent, End + count);
+            }
+        }
+
+        void IPreRemove.PreRemove(Node parent, Node node, Int32 index)
+        {
+            if (Head.IsInclusiveDescendantOf(node))
+            {
+                StartWith(parent, index);
+            }
+            if (Tail.IsInclusiveDescendantOf(node))
+            {
+                EndWith(parent, index);
+            }
+            if (Head == parent && Start > index)
+            {
+                StartWith(parent, Start - 1);
+            }
+            if (Tail == parent && End > index)
+            {
+                EndWith(parent, End - 1);
             }
         }
 
