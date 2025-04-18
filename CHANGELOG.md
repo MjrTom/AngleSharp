@@ -1,3 +1,15 @@
+# 1.3.0
+
+Released on Friday, April 18 2025.
+
+- Fixed DOM exposed type of `HasChildNodes` (#1219) @arekdygas
+- Fixed `NodeIterator` behavior when nodes are removed (#1222)
+- Improved form documentation (#1220) @RedZone908
+- Updated to NUKE 9 and removed obsolete .NET 6 and 9 targets (#1216) @lahma
+- Added `GetAttributeNode` methods to `IElement` (#1223) @arekdygas
+- Added support for finding targets in browsing contexts (#1218) @TheJayMann
+- Added support for targetting iframes (#1205) @TheJayMann
+
 # 1.2.0
 
 Released on Tuesday, December 31 2024.
