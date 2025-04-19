@@ -219,5 +219,23 @@
             Assert.AreEqual(null, ni.Next());
             Assert.AreEqual(null, ni.Previous());
         }
+
+        [Test]
+        public void NodeIteratorShouldDealWithNodeRemoval_Issue1222()
+        {
+            var doc = "<div id='outer'><div id='inner1'></div><div id='inner2'></div></div>".ToHtmlDocument();
+            var outer = doc.GetElementById("outer");
+            var inner1 = doc.GetElementById("inner1");
+            var inner2 = doc.GetElementById("inner2");
+            var iterator = doc.CreateNodeIterator(outer, FilterSettings.Element);
+            var node1 = iterator.Next();
+            var node2 = iterator.Next();
+            node2.Parent.RemoveChild(node2);
+            var node3 = iterator.Next();
+
+            Assert.AreEqual(outer, node1);
+            Assert.AreEqual(inner1, node2);
+            Assert.AreEqual(inner2, node3);
+        }
     }
 }

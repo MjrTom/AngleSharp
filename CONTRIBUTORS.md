@@ -62,6 +62,8 @@ AngleSharp contains code written by (in order of first pull request / commit):
 * [Martin Parkin](https://github.com/memiamp)
 * [Hakob Grigoryan](https://github.com/hflexgrig)
 * [TheJayMann](https://github.com/TheJayMann)
+* [arekdygas](https://github.com/arekdygas)
+* [RedZone908](https://github.com/RedZone908)
 
 Without these awesome people AngleSharp could not exist. Thanks to everyone for your contributions! :beers:
 
