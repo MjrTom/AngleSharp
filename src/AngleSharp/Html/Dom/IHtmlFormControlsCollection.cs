@@ -1,7 +1,9 @@
-﻿namespace AngleSharp.Html.Dom
+namespace AngleSharp.Html.Dom
 {
     using AngleSharp.Attributes;
     using AngleSharp.Dom;
+    using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a collection of HTML form controls.
