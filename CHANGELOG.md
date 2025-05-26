@@ -1,3 +1,9 @@
+# 1.3.1
+
+Released on Friday, May 30 2025.
+
+- Added `IReadOnlyList<T>` interface to `IHtmlCollection`, `IStringList`, `ITokenList`, `IHtmlFormControlsCollection` (#1226, #1227) @weitzhandler
+
 # 1.3.0
 
 Released on Friday, April 18 2025.
