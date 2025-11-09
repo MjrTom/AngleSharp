@@ -1,3 +1,11 @@
+# 1.4.0
+
+Released on ???.
+
+- Fixed handling of carriage return in text sources
+- Added support for `of` syntax in `:nth-child` functions within CSS selectors
+- Added parsing for customizable `<select>` (#1230)
+
 # 1.3.1
 
 Released on Saturday, November 8 2025.

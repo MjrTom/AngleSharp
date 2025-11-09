@@ -392,23 +392,26 @@ namespace AngleSharp.Common
 
         private void AdvanceUnsafe()
         {
-            if (!_disableElementPositionTracking) Track();
+            if (!_disableElementPositionTracking)
+            {
+                Track();
+            }
 
             var c = ReadCharFromSource();
             _current = NormalizeForward(c);
+        }
 
-            void Track()
+        private void Track()
+        {
+            if (_current == Symbols.LineFeed)
             {
-                if (_current == Symbols.LineFeed)
-                {
-                    _columns.Push(_column);
-                    _column = 1;
-                    _row++;
-                }
-                else
-                {
-                    _column++;
-                }
+                _columns.Push(_column);
+                _column = 1;
+                _row++;
+            }
+            else
+            {
+                _column++;
             }
         }
 
@@ -463,30 +466,29 @@ namespace AngleSharp.Common
         {
             if (p != Symbols.CarriageReturn)
             {
-                _normalized = false;
                 return p;
             }
             else if (_source.Index < _source.Length && _source[_source.Index] == Symbols.LineFeed)
             {
-                _normalized = false;
                 BackUnsafe();
-                return Symbols.Null;
+                return _current;
             }
             else
             {
                 _normalized = true;
-                return Symbols.LineFeed;
             }
+
+            return Symbols.LineFeed;
         }
 
         private Char ReadCharFromSource()
         {
-            if (_wts != null)
+            if (_wts is not null)
             {
                 return _wts.ReadCharacter();
             }
 
-            if (_cats != null)
+            if (_cats is not null)
             {
                 return _cats.ReadCharacter();
             }

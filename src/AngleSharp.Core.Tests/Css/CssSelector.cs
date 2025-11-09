@@ -1,20 +1,25 @@
 namespace AngleSharp.Core.Tests.Css
 {
+    using AngleSharp.Css;
+    using AngleSharp.Css.Dom;
+    using AngleSharp.Css.Parser;
     using AngleSharp.Dom;
     using NUnit.Framework;
     using System;
     using System.Linq;
-    using AngleSharp.Css;
-    using AngleSharp.Css.Dom;
-    using AngleSharp.Css.Parser;
 
     [TestFixture]
     public class CssSelectorTests
     {
+        private static IHtmlCollection<IElement> RunQuery(IDocument document, String query)
+        {
+            return document.QuerySelectorAll(query);
+        }
+
         private static IHtmlCollection<IElement> RunQuery(String query)
         {
             var document = Assets.selectors.ToHtmlDocument();
-            return document.QuerySelectorAll(query);
+            return RunQuery(document, query);
         }
 
         [Test]
@@ -70,6 +75,20 @@ namespace AngleSharp.Core.Tests.Css
             Assert.AreEqual("p", result[1].GetTagName());
             Assert.AreEqual("span", result[2].GetTagName());
             Assert.AreEqual("p", result[3].GetTagName());
+        }
+
+        [Test]
+        public void NthChildWithOfSyntax()
+        {
+            var document = Assets.moreselectors.ToHtmlDocument();
+            var highlightClassThatIsSecondChild = RunQuery(document, ".highlight:nth-child(2)");
+            var secondChildThatHasHighlight = RunQuery(document, ":nth-child(2 of .highlight)");
+
+            Assert.AreEqual(1, highlightClassThatIsSecondChild.Length);
+            Assert.AreEqual(1, secondChildThatHasHighlight.Length);
+            Assert.AreNotEqual(highlightClassThatIsSecondChild[0], secondChildThatHasHighlight[0]);
+            Assert.AreEqual("li", secondChildThatHasHighlight[0].GetTagName());
+            Assert.AreEqual("highlight", secondChildThatHasHighlight[0].ClassName);
         }
 
         [Test]

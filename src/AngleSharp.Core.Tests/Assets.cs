@@ -12,6 +12,8 @@ namespace AngleSharp.Core.Tests
 
         public static string selectors { get; } = GetManifestResourceString("Pages.selectors.html", Windows1252);
 
+        public static string moreselectors { get; } = GetManifestResourceString("Pages.moreselectors.html", Windows1252);
+
         public static string gbk => GetManifestResourceString("Pages.GBK.html", Encoding.UTF8);
 
         public static string books => GetManifestResourceString("Pages.books.xml", Windows1252);
