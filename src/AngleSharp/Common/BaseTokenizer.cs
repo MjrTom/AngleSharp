@@ -466,6 +466,7 @@ namespace AngleSharp.Common
         {
             if (p != Symbols.CarriageReturn)
             {
+                _normalized = false;
                 return p;
             }
             else if (_source.Index < _source.Length && _source[_source.Index] == Symbols.LineFeed)
