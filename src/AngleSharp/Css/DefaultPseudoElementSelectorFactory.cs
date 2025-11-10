@@ -18,11 +18,13 @@ namespace AngleSharp.Css
             { PseudoElementNames.Before, new PseudoElementSelector(el => el.IsPseudo(PseudoElementNames.Before), PseudoElementNames.Before) },
             { PseudoElementNames.After, new PseudoElementSelector(el => el.IsPseudo(PseudoElementNames.After), PseudoElementNames.After) },
             { PseudoElementNames.Selection, new PseudoElementSelector(_ => false, PseudoElementNames.Selection) },
-            { PseudoElementNames.FootnoteCall, new PseudoElementSelector(_ => false, PseudoElementNames.FootnoteCall) },
-            { PseudoElementNames.FootnoteMarker, new PseudoElementSelector(_ => false, PseudoElementNames.FootnoteMarker) },
+            { PseudoElementNames.FootnoteCall, new PseudoElementSelector(el => el.IsPseudo(PseudoElementNames.FootnoteCall), PseudoElementNames.FootnoteCall) },
+            { PseudoElementNames.FootnoteMarker, new PseudoElementSelector(el => el.IsPseudo(PseudoElementNames.FootnoteMarker), PseudoElementNames.FootnoteMarker) },
             { PseudoElementNames.FirstLine, new PseudoElementSelector(el => el.HasChildNodes && el.ChildNodes[0].NodeType == NodeType.Text, PseudoElementNames.FirstLine) },
             { PseudoElementNames.FirstLetter, new PseudoElementSelector(el => el.HasChildNodes && el.ChildNodes[0].NodeType == NodeType.Text && el.ChildNodes[0].TextContent.Length > 0, PseudoElementNames.FirstLetter) },
             { PseudoElementNames.Content, new PseudoElementSelector(_ => false, PseudoElementNames.Content) },
+            { PseudoElementNames.Checkmark, new PseudoElementSelector(el => el.IsPseudo(PseudoElementNames.Checkmark), PseudoElementNames.Checkmark) },
+            { PseudoElementNames.PickerIcon, new PseudoElementSelector(el => el.IsPseudo(PseudoElementNames.PickerIcon), PseudoElementNames.PickerIcon) },
         };
 
         /// <summary>

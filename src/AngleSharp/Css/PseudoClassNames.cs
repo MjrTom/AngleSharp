@@ -113,6 +113,11 @@ namespace AngleSharp.Css
         public static readonly String Indeterminate = "indeterminate";
 
         /// <summary>
+        /// The open pseudo class.
+        /// </summary>
+        public static readonly String Open = "open";
+
+        /// <summary>
         /// The placeholder-shown pseudo class.
         /// </summary>
         public static readonly String PlaceholderShown = "placeholder-shown";

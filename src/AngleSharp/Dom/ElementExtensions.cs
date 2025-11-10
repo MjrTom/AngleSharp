@@ -415,6 +415,18 @@ namespace AngleSharp.Dom
         }
 
         /// <summary>
+        /// Checks if the element is currently open.
+        /// </summary>
+        /// <param name="element">The element to check.</param>
+        /// <returns>True if the element is currently open, otherwise false.</returns>
+        public static Boolean IsOpen(this IElement element)
+        {
+            //TODO implement semantic attributes
+            // https://drafts.csswg.org/selectors/#open-state
+            return false;
+        }
+
+        /// <summary>
         /// Checks if the element is currently checked.
         /// </summary>
         /// <param name="element">The element to check.</param>

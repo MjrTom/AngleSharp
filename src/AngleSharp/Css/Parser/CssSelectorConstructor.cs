@@ -37,6 +37,11 @@ namespace AngleSharp.Css.Parser
             { PseudoClassNames.HostContext, ctx => new HostContextFunctionState(ctx) },
         };
 
+        private static readonly Dictionary<String, Func<CssSelectorConstructor, FunctionState>> pseudoElementFunctions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { PseudoElementNames.Picker, _ => new PickerFunctionState() },
+        };
+
         private readonly CssTokenizer _tokenizer = tokenizer;
         private readonly Stack<CssCombinator> _combinators = new Stack<CssCombinator>();
         private readonly IAttributeSelectorFactory _attributeSelector = attributeSelector;
@@ -383,6 +388,20 @@ namespace AngleSharp.Css.Parser
                 {
                     _valid = _valid && !_nested;
                     Insert(sel);
+                    return;
+                }
+            }
+            else if (token.Type == CssTokenType.Function)
+            {
+                if (pseudoElementFunctions.TryGetValue(token.Data, out var creator))
+                {
+                    _state = State.Function;
+                    _function = creator.Invoke(this);
+                    _ready = false;
+                    return;
+                }
+                else if (_forgiving)
+                {
                     return;
                 }
             }
@@ -830,6 +849,47 @@ namespace AngleSharp.Css.Parser
                 {
                     var code = PseudoClassNames.Lang.CssFunction(value);
                     return new PseudoClassSelector(el => el is IHtmlElement htmlEl && htmlEl.Language!.StartsWith(value, StringComparison.OrdinalIgnoreCase), code);
+                }
+
+                return null;
+            }
+        }
+
+        private sealed class PickerFunctionState : FunctionState
+        {
+            private Boolean valid;
+            private String? value;
+
+            public PickerFunctionState()
+            {
+                valid = true;
+                value = null;
+            }
+
+            protected override Boolean OnToken(CssSelectorToken token)
+            {
+                if (token.Type == CssTokenType.Ident)
+                {
+                    value = token.Data;
+                }
+                else if (token.Type == CssTokenType.RoundBracketClose)
+                {
+                    return true;
+                }
+                else if (token.Type != CssTokenType.Whitespace)
+                {
+                    valid = false;
+                }
+
+                return false;
+            }
+
+            public override ISelector? Produce()
+            {
+                if (valid && value is not null)
+                {
+                    var code = PseudoElementNames.Picker.CssFunction(value);
+                    return new PseudoElementSelector(el => el.IsPseudo(code), code);
                 }
 
                 return null;

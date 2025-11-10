@@ -34,6 +34,7 @@ namespace AngleSharp.Css
             { PseudoClassNames.Disabled, new PseudoClassSelector(el => el.IsDisabled(), PseudoClassNames.Disabled) },
             { PseudoClassNames.Default, new PseudoClassSelector(el => el.IsDefault(), PseudoClassNames.Default) },
             { PseudoClassNames.Checked, new PseudoClassSelector(el => el.IsChecked(), PseudoClassNames.Checked) },
+            { PseudoClassNames.Open, new PseudoClassSelector(el => el.IsOpen(), PseudoClassNames.Open) },
             { PseudoClassNames.Indeterminate, new PseudoClassSelector(el => el.IsIndeterminate(), PseudoClassNames.Indeterminate) },
             { PseudoClassNames.PlaceholderShown, new PseudoClassSelector(el => el.IsPlaceholderShown(), PseudoClassNames.PlaceholderShown) },
             { PseudoClassNames.Unchecked, new PseudoClassSelector(el => el.IsUnchecked(), PseudoClassNames.Unchecked) },
