@@ -31,6 +31,8 @@
       </group>
       <group targetFramework="net80">
       </group>
+      <group targetFramework="net100">
+      </group>
     </dependencies>
   </metadata>
 </package>

@@ -1,10 +1,13 @@
 # 1.4.0
 
-Released on ???.
+Released on Wednesday, November 12 2025.
 
 - Fixed handling of carriage return in text sources
 - Added support for `of` syntax in `:nth-child` functions within CSS selectors
+- Added `selectedcontent` to known elements (#1230)
+- Added `:open`, `::checkmark`, `::picker-icon`, and `::picker(ident)` to selector syntax (#1230)
 - Added parsing for customizable `<select>` (#1230)
+- Added .NET 10 as an explicit target
 
 # 1.3.1
 
