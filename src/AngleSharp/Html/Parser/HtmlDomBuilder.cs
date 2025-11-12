@@ -2311,6 +2311,11 @@ namespace AngleSharp.Html.Parser
                         var optgroup = _elementFactory.Create(_document, TagNames.Optgroup);
                         AddElement(optgroup, ref token);
                     }
+                    else if (tagName.Is(TagNames.Button))
+                    {
+                        var button = _elementFactory.Create(_document, TagNames.Button);
+                        AddElement(button, ref token);
+                    }
                     else if (tagName.Is(TagNames.Select))
                     {
                         RaiseErrorOccurred(HtmlParseError.SelectNesting, ref token);
@@ -2329,6 +2334,11 @@ namespace AngleSharp.Html.Parser
                     else if (tagName.IsOneOf(TagNames.Template, TagNames.Script) || IsCustomElementEverywhere(tagName))
                     {
                         InHead(ref token);
+                    }
+                    else if (!CurrentNode.LocalName.Is(TagNames.Select))
+                    {
+                        var element = _elementFactory.CreateUnknown(_document, tagName);
+                        AddElement(element, ref token);
                     }
                     else
                     {
@@ -2361,6 +2371,17 @@ namespace AngleSharp.Html.Parser
                     {
                         RaiseErrorOccurred(HtmlParseError.SelectNotInScope, ref token);
                     }
+                    else if (!CurrentNode.LocalName.Is(TagNames.Select))
+                    {
+                        if (CurrentNode.LocalName.Is(tagName))
+                        {
+                            CloseCurrentNode();
+                        }
+                        else
+                        {
+                            RaiseErrorOccurred(HtmlParseError.TagDoesNotMatchCurrentNode, ref token);
+                        }
+                    }
                     else
                     {
                         RaiseErrorOccurred(HtmlParseError.TagCannotEndHere, ref token);
@@ -2379,6 +2400,70 @@ namespace AngleSharp.Html.Parser
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// Intermediate step - as long as customizable select is not finished.
+        /// </summary>
+        /// <param name="token">The passed token.</param>
+        private void InButtonInSelect(ref StructHtmlToken token)
+        {
+            if (token.Type == HtmlTokenType.StartTag)
+            {
+                var tagName = token.Name;
+
+                if (tagName.Is(TagNames.Select) || tagName.Is(TagNames.Option) || tagName.Is(TagNames.Optgroup))
+                {
+                    InSelect(ref token);
+                    return;
+                }
+            }
+
+            if (token.Type == HtmlTokenType.EndTag)
+            {
+                var tagName = token.Name;
+
+                if (tagName.Is(TagNames.Button) && CurrentNode.LocalName.Is(TagNames.Button))
+                {
+                    CloseCurrentNode();
+                    _currentMode = HtmlTreeMode.InSelect;
+                    return;
+                }
+            }
+
+            InBody(ref token);
+        }
+
+        /// <summary>
+        /// Intermediate step - as long as customizable select is not finished.
+        /// </summary>
+        /// <param name="token">The passed token.</param>
+        private void InOptionInSelect(ref StructHtmlToken token)
+        {
+            if (token.Type == HtmlTokenType.StartTag)
+            {
+                var tagName = token.Name;
+
+                if (tagName.Is(TagNames.Select) || tagName.Is(TagNames.Option) || tagName.Is(TagNames.Optgroup))
+                {
+                    InSelect(ref token);
+                    return;
+                }
+            }
+
+            if (token.Type == HtmlTokenType.EndTag)
+            {
+                var tagName = token.Name;
+
+                if (tagName.Is(TagNames.Option) && CurrentNode.LocalName.Is(TagNames.Option))
+                {
+                    CloseCurrentNode();
+                    _currentMode = HtmlTreeMode.InSelect;
+                    return;
+                }
+            }
+
+            InBody(ref token);
         }
 
         /// <summary>
