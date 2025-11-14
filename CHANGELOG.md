@@ -1,3 +1,9 @@
+# 1.4.1
+
+Released on Saturday, November 15 2025.
+
+- Fixed NuGet target framework for .NET 10
+
 # 1.4.0
 
 Released on Wednesday, November 12 2025.
