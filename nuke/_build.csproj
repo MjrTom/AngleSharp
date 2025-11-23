@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.11.48" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.11.48" />
     <PackageDownload Include="NuGet.CommandLine" Version="[6.12.2]" />
   </ItemGroup>
