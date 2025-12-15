@@ -15,8 +15,10 @@
 
 ## Reporting a Vulnerability
 
-If you find a vulnerability, use the [GitHub issue tracker](https://github.com/AngleSharp/AngleSharp/issues) to inform us quickly.
+If you find a vulnerability, use the [GitHub security tracker](https://github.com/AngleSharp/AngleSharp/security) to inform us quickly.
 
 Security critical bugs get the highest possible priority and should be released within some hours (business days) to at most a day (weekends).
 
 If a security vulnerability is found in a supported version we will release a hotfix. Vulnerabilities for non-supported versions may not be fixed (but this highly depends on the version and vulnerability).
+
+While public issues can be used for reporting vulnerabilities, too, we recommend using the [private tracker](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) to prevent potential exposure as long as possible.
