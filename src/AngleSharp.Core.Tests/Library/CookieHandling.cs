@@ -257,10 +257,12 @@ namespace AngleSharp.Core.Tests.Library
                 var document = await context.OpenAsync(baseUrl);
 
                 var expected = JObject.Parse(@"{
-  ""foo"": ""bar"",
-  ""k1"": ""v1"",
-  ""k2"": ""v2"",
-  ""test"": ""baz""
+  ""cookies"": {
+    ""foo"": ""bar"",
+    ""k1"": ""v1"",
+    ""k2"": ""v2"",
+    ""test"": ""baz""
+  }
 }
 ");
 
@@ -281,7 +283,9 @@ namespace AngleSharp.Core.Tests.Library
                 var document = await context.OpenAsync(redirectUrl);
 
                Assert.AreEqual(@"{
-  ""test"": ""baz""
+  ""cookies"": {
+    ""test"": ""baz""
+  }
 }
 ".Replace(Environment.NewLine, "\n"), document.Body.TextContent);
             }
