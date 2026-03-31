@@ -2,6 +2,7 @@
 {
     using AngleSharp.Text;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Contains the known protocol names.
@@ -73,7 +74,7 @@
         /// </summary>
         public static readonly String Blob = "blob";
 
-        private static readonly String[] RelativeProtocols = new[]
+        private static readonly HashSet<String> RelativeProtocols = new(StringComparer.Ordinal)
         {
             Http,
             Https,
@@ -84,7 +85,7 @@
             Gopher
         };
 
-        private static readonly String[] OriginalableProtocols = new[]
+        private static readonly HashSet<String> OriginalableProtocols = new(StringComparer.Ordinal)
         {
             Http,
             Https,

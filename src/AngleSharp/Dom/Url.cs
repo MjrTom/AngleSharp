@@ -4,9 +4,7 @@ namespace AngleSharp.Dom
     using AngleSharp.Io;
     using AngleSharp.Text;
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Text;
     using Common;
 
@@ -27,7 +25,8 @@ namespace AngleSharp.Dom
         private static readonly String UpperDirectory = "..";
         private static readonly String[] UpperDirectoryAlternatives = new[] { "%2e%2e", ".%2e", "%2e." };
         private static readonly Url DefaultBase = new(String.Empty, String.Empty, String.Empty);
-        private static readonly Char[] C0ControlAndSpace = Enumerable.Range(0x00, 0x21).Select(c => (Char)c).ToArray();
+        private static readonly Char[] C0ControlAndSpace =
+            "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0008\u0009\u000A\u000B\u000C\u000D\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020".ToCharArray();
 
         // Remark: `UseStd3AsciiRules = false` is against spec
         // https://anglesharp.github.io/Specification-Url/#concept-domain-to-ascii
@@ -999,20 +998,23 @@ namespace AngleSharp.Dom
                 index++;
             }
 
-            var paths = new List<String>();
+            var hasExistingPath = !onlyPath && !String.IsNullOrEmpty(_path) && index - init == 0;
+            var segmentCount = 0;
+            var originalCount = 0;
+            var output = StringBuilderPool.Obtain();
 
-            if (!onlyPath && !String.IsNullOrEmpty(_path) && index - init == 0)
+            if (hasExistingPath)
             {
-                var split = _path.Split(Symbols.Solidus);
+                var lastSlash = _path.LastIndexOf(Symbols.Solidus);
 
-                if (split.Length > 1)
+                if (lastSlash >= 0)
                 {
-                    paths.AddRange(split);
-                    paths.RemoveAt(split.Length - 1);
+                    output.Append(_path, 0, lastSlash);
+                    segmentCount = CountChar(output, Symbols.Solidus) + 1;
+                    originalCount = segmentCount;
                 }
             }
 
-            var originalCount = paths.Count;
             var buffer = StringBuilderPool.Obtain();
 
             while (index <= length)
@@ -1039,9 +1041,21 @@ namespace AngleSharp.Dom
 
                     if (path.Is(UpperDirectory))
                     {
-                        if (paths.Count > 0)
+                        if (segmentCount > 0)
                         {
-                            paths.RemoveAt(paths.Count - 1);
+                            // Remove last segment from output
+                            var lastSlash = LastIndexOf(output, Symbols.Solidus);
+
+                            if (lastSlash >= 0)
+                            {
+                                output.Length = lastSlash;
+                            }
+                            else
+                            {
+                                output.Length = 0;
+                            }
+
+                            segmentCount--;
                         }
 
                         close = true;
@@ -1049,16 +1063,23 @@ namespace AngleSharp.Dom
                     else if (!path.Is(CurrentDirectory))
                     {
                         if (_scheme.Is(ProtocolNames.File) &&
-                            paths.Count == originalCount &&
+                            segmentCount == originalCount &&
                             path.Length == 2 &&
                             path[0].IsLetter() &&
                             path[1] == Symbols.Pipe)
                         {
                             path = path.Replace(Symbols.Pipe, Symbols.Colon);
-                            paths.Clear();
+                            output.Length = 0;
+                            segmentCount = 0;
                         }
 
-                        paths.Add(path);
+                        if (segmentCount > 0)
+                        {
+                            output.Append(Symbols.Solidus);
+                        }
+
+                        output.Append(path);
+                        segmentCount++;
                     }
                     else
                     {
@@ -1067,7 +1088,12 @@ namespace AngleSharp.Dom
 
                     if (close && c != Symbols.Solidus && c != Symbols.ReverseSolidus)
                     {
-                        paths.Add(String.Empty);
+                        if (segmentCount > 0)
+                        {
+                            output.Append(Symbols.Solidus);
+                        }
+
+                        segmentCount++;
                     }
 
                     if (breakNow)
@@ -1097,7 +1123,7 @@ namespace AngleSharp.Dom
             }
 
             buffer.ReturnToPool();
-            _path = String.Join("/", paths);
+            _path = output.ToPool();
             _query = null;
 
             if (index < length)
@@ -1111,6 +1137,34 @@ namespace AngleSharp.Dom
             }
 
             return true;
+        }
+
+        private static Int32 CountChar(StringBuilder sb, Char c)
+        {
+            var count = 0;
+
+            for (var i = 0; i < sb.Length; i++)
+            {
+                if (sb[i] == c)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private static Int32 LastIndexOf(StringBuilder sb, Char c)
+        {
+            for (var i = sb.Length - 1; i >= 0; i--)
+            {
+                if (sb[i] == c)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         internal Boolean ParseQuery(String input, Int32 index, Int32 length, Boolean onlyQuery = false, Boolean fromParams = false)
@@ -1182,6 +1236,12 @@ namespace AngleSharp.Dom
         private static String NormalizeInput(String input)
         {
             var trimmedInput = input.Trim(C0ControlAndSpace);
+
+            if (trimmedInput.AsSpan().IndexOfAny('\t', '\n', '\r') < 0)
+            {
+                return trimmedInput;
+            }
+
             var buffer = StringBuilderPool.Obtain();
             foreach (Char c in trimmedInput)
             {
@@ -1190,7 +1250,6 @@ namespace AngleSharp.Dom
                     case Symbols.Tab:
                     case Symbols.LineFeed:
                     case Symbols.CarriageReturn:
-                        // parse error
                         break;
                     default:
                         buffer.Append(c);
